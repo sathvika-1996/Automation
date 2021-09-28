@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BooK Details</title>
+</head>
+<body>
+   <h1> choose the book</h1>
+     <h2>The Monk Who Sold His Ferrari</h2>
+    <ul> <li>Author First Name- Robin Sharma </li>
+         <li>Author last Name - Sharma</li>
+        <li>Publication date-1999</li>
+         <li>Description- The book is a business fable derived from Sharma's personal experiences after leaving his career as a litigation lawyer at the age of 25.</li>
+         <li>Publisher name-<a href="https://en.wikipedia.org/wiki/HarperCollins"> Harper Collins Publishers</a> </li>
+         <li>Language- English</li>
+         <li>ISBN number- 45678976</li>
+         <li>3 quotes-<p> “Everything is created twice, first in the mind and then in reality.”
+<br>“I've learned that everything happens for a reason”</br>
+“the purpose of life is the life of purpose”</p></li>
+         <li>Book ID -1 </li>
+    </ul>
+
+     <h2>The Beauty in Breaking: A Memoir </h2>
+    <ul> <li>Author First Name- Harper  </li>
+         <li>Author last Name - Lee</li>
+        <li>Publication date-2020</li>
+         <li>Description- n emergency room physician explores how a life of service to others taught her how to heal herself.Michele Harper is a female, African American emergency room physician in a profession that is overwhelmingly male and white.ation lawyer at the age of 25.</li>
+         <li>Publisher name-<a href="https://www.litlovers.com/reading-guides/non-fiction/11786-beauty-in-breaking-harper"> Penguin Publishing</a> </li>
+         <li>Language- English</li>
+         <li>ISBN number-9780525537380</li>
+         <li>3 quotes-<p>• How to let go of fear even when the future is murky.
+         <br>• How to tell the truth when it's simpler to overlook it.</br>
+            • How to understand that compassion isn't the same as justice.
+         </p></li>
+         <li>Book ID -2 </li>
+    </ul>
+</body>
+</html>
