@@ -1,0 +1,120 @@
+import requests, threading, time, csv, datetime, os, smtplib
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from bs4 import BeautifulSoup
+
+WEB_URL = "https://www.goodreads.com"
+LOCAL_FILE = "details.csv"
+
+GMAIL_ID = "sender_mail@gmail.com"
+GMAIL_PASSWORD = "gmail_password"
+GMAIL_SMTP = 'smtp.gmail.com:465'
+EMAIL_RECIEVERS = ['sender1_mail@gmail.com' , 'sender2_mail@gmail.com'. 'sender1_mail@gmail.com','sender3_mail@gmail.com']
+
+
+def get_soup(URL=f"{WEB_URL}/list/show/131897.Middle_Grade_Novels_of_2021"):
+    r = requests.get(URL)
+    return BeautifulSoup(r.content, 'html5lib')
+
+
+def get_books_urls(soup):
+    books_urls = {}
+    try:
+        tbody = soup.find(id="all_votes").table.tbody
+        for tr in tbody.find_all("tr"):
+            tds = tr.find_all("td")
+            if len(tds) == 4:
+                title_td = tds[2]
+                books_urls[title_td.a.span.text] = title_td.a["href"]
+        return books_urls
+    except ValueError:
+        return None
+
+
+def get_book_details(url):
+    try:
+        r = requests.get(url)
+        book_soup = BeautifulSoup(r.content, 'html5lib')
+        meta_col = book_soup.find(id="metacol")
+        author_div = meta_col.find(id="bookAuthors")
+        author_name = author_div.find("span", itemprop="name")
+        rating = meta_col.find(id="bookMeta").find("span", itemprop="ratingValue")
+        return (author_name.text, float(rating.text))
+    except Exception as e:
+        return None
+
+
+def get_books_ratings_authors(books):
+    book_details = {}
+    thrds = []
+
+    def process_book_details(name, url):
+        details = get_book_details(url)
+        while not details:
+            details = get_book_details(url)
+        book_details[name] = details
+
+    for name, url in books.items():
+        thrd = threading.Thread(target=process_book_details, args=[name, f"{WEB_URL}{url}"])
+        thrds.append(thrd)
+        thrd.start()
+    for thrd in thrds:
+        thrd.join()
+    return book_details
+
+
+def save_details(book_dets):
+    with open(LOCAL_FILE, "w+") as fl:
+        writer = csv.writer(fl)
+        for book_name, details in book_dets.items():
+            writer.writerow([book_name, *details])
+
+
+def send_mails():
+    msg = MIMEMultipart()
+    msg['From'] = GMAIL_ID
+    msg['To'] = ", " .join(EMAIL_RECIEVERS)
+    msg['Subject'] = " Authors List"
+
+    msg.attach(MIMEText("""
+    Auto generated email to send the collected list of authors and rating for 100 books from Goodreads.
+    """))
+
+    with open(LOCAL_FILE, "rb") as fil:
+        part = MIMEApplication(
+            fil.read(),
+            Name=LOCAL_FILE
+        )
+    part['Content-Disposition'] = f'attachment; filename="{LOCAL_FILE}"'
+    msg.attach(part)
+
+    smtp = smtplib.SMTP_SSL(GMAIL_SMTP)
+    smtp.login(GMAIL_ID, GMAIL_PASSWORD)
+    smtp.sendmail(GMAIL_ID, EMAIL_RECIEVERS, msg.as_string())
+    smtp.quit()
+
+
+class Scheduler(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run_scipt(self):
+        try:
+            soup = get_soup()
+            books = get_books_urls(soup)
+            dets = get_books_ratings_authors(books)
+            save_details(dets)
+            send_mails()
+        except Exception as e:
+            print(e)
+
+    def run(self):
+
+                self.run_scipt()
+                print("I am able to fetch the the data and send it in csv file to the mentioned sender mail ID")
+
+
+if __name__ == "__main__":
+    sched = Scheduler()
+    sched.start()
