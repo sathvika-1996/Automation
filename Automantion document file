@@ -145,23 +145,30 @@
 
   {
 "source": [class Scheduler(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
+    "def __init__(self):
+    "   threading.Thread.__init__(self)
 
-    def run_scipt(self):
-        try:
-            soup = get_soup()
-            books = get_books_urls(soup)
-            dets = get_books_ratings_authors(books)
-            save_details(dets)
-            send_mails()
-        except Exception as e:
-            print(e)
+    "def run_scipt(self):
+    "   try:
+    "       soup = get_soup()
+    "       books = get_books_urls(soup)
+    "       dets = get_books_ratings_authors(books)
+    "       save_details(dets)
+    "       send_mails()
+    "    except Exception as e:
+    "        print(e)
 
-    def run(self):
-
-                self.run_scipt()
-                print("I am able to fetch the the data and send it in csv file to the mentioned sender mail ID")
+    "def run(self):
+    "   while True:
+    "       crnt_week = str(datetime.date.today().isocalendar().week)
+    "       if os.path.isfile(crnt_week):
+    "           pass
+    "       else:
+    "           self.run_scipt()  
+    "           If only self.run_scrip is made to execute The receiver gets the mail without scheduler.\n,
+    "           with open(crnt_week, "w+") as fl:
+    "           pass
+    "       time.sleep(86400)
 
 
 if __name__ == "__main__":
@@ -192,4 +199,4 @@ if __name__ == "__main__":
  },
 
 """  The above Code is able to fetch the 100 books details from goodreads website.
-     The details of Book name, Author name , book rating is collected and then sent to the mentioned mail id. """
+     The details of Book name, Author name , book rating is collected and then sent to the mentioned mail id.  """
